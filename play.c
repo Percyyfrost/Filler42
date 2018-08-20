@@ -6,7 +6,7 @@
 /*   By: vuyaninxele <marvin@42.fr>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 07:16:22 by vuyaninxe         #+#    #+#             */
-/*   Updated: 2018/08/19 07:05:32 by vnxele           ###   ########.fr       */
+/*   Updated: 2018/08/20 12:59:48 by vnxele           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,6 @@
 
 void		anlys_piece(t_vars *head)
 {
-	int i;
-	int j;
-	int flag;
-
-	flag = 0;
 	head->len_r = head->piece_r;
 	head->start_len = 0;
 	while (head->piece[head->start_len + 1])
@@ -28,71 +23,13 @@ void		anlys_piece(t_vars *head)
 			head->len_r -= 1;
 		else
 			break ;
-	j = -1;
-	head->w_start = 0;
-	while (head->w_start < head->piece_c)
-	{
-		i = head->start_len;
-		while (i < head->len_r)
-		{
-			if (head->piece[i][head->w_start] == '*')
-				flag = 1;
-			i++;
-		}
-		if (flag)
-			break ;
-		head->w_start++;
-	}
-	flag = 0;
-	i = head->piece_c - 1;
-	head->w_end = head->piece_c;
-	while (head->w_end != -1)
-	{
-		j = head->len_r -1;
-		if (head->piece[j][head->w_end] == '*')
-			break ;
-		while (j != -1)
-		{
-			if (head->piece[j][head->w_end] == '*')
-				flag = 1;
-			j--;
-		}
-		if (flag)
-			break ;
-		head->w_end--;
-	}
+	width_start(head);
+	width_end(head);
 }
 
-void		match(t_vars head, t_play *ply)
+void		add_moves(t_vars head, t_play *ply)
 {
-	int	i;
-	int	j;
-	int	ok;
-
-	ok = 0;
-	i = head.start_len;
-	ply->x_tmp = ply->x;
-	while (i < head.len_r && ply->x_tmp < head.map_r && !ok)
-	{
-		j = head.w_start;
-		ply->y_tmp = ply->y;
-		if (head.map[ply->x_tmp][ply->y_tmp] == head.eno)
-			ok = 1;
-		while (j <= head.w_end && ply->y_tmp < head.map_c && !ok)
-		{
-			if (head.map[ply->x_tmp][ply->y_tmp] == head.eno)
-				ok = 1;
-			if (head.map[ply->x_tmp][ply->y_tmp] == head.pno && head.piece[i][j] == '*'){
-				ply->flg++;
-			}
-			j++;
-			ply->y_tmp++;
-		}
-		ply->flg = (j > head.w_end) ? ply->flg : 0;
-		i++;
-		ply->x_tmp++;
-	}
-	if (ply->flg == 1 && !ok && i == head.len_r)
+	if (ply->flg == 1 && !ply->ok && ply->i == head.len_r)
 	{
 		ply->moves[ply->m] = (int*)malloc(sizeof(int) * 2);
 		ply->moves[ply->m][0] = ply->x - head.start_len;
@@ -103,15 +40,49 @@ void		match(t_vars head, t_play *ply)
 		ply->flg = 0;
 }
 
+void		match(t_vars head, t_play *ply)
+{
+	ply->ok = 0;
+	ply->i = head.start_len;
+	ply->x_tmp = ply->x;
+	while (ply->i < head.len_r && ply->x_tmp < head.map_r && !ply->ok)
+	{
+		ply->j = head.w_start;
+		ply->y_tmp = ply->y;
+		if (head.map[ply->x_tmp][ply->y_tmp] == head.eno)
+			ply->ok = 1;
+		while (ply->j <= head.w_end && ply->y_tmp < head.map_c && !ply->ok)
+		{
+			if (head.map[ply->x_tmp][ply->y_tmp] == head.eno)
+				ply->ok = 1;
+			if (head.map[ply->x_tmp][ply->y_tmp] == head.pno
+					&& head.piece[ply->i][ply->j] == '*')
+				ply->flg++;
+			ply->j++;
+			ply->y_tmp++;
+		}
+		ply->flg = (ply->j > head.w_end) ? ply->flg : 0;
+		ply->i++;
+		ply->x_tmp++;
+	}
+	add_moves(head, ply);
+}
+
+void		init_ply(t_play *ply)
+{
+	ply->h = 0;
+	ply->x = 0;
+	ply->m = 0;
+	ply->flg = 0;
+	ply->moves = (int**)malloc(sizeof(int*) * 150);
+}
+
 void		play(t_vars head)
 {
-	t_play ply;
-	
+	t_play	ply;
+
 	anlys_piece(&head);
-	ply.x = 0;
-	ply.m = 0;
-	ply.flg = 0;
-	ply.moves = (int**)malloc(sizeof(int*) * 150);
+	init_ply(&ply);
 	while (ply.x < head.map_r)
 	{
 		ply.y = 0;
@@ -127,9 +98,8 @@ void		play(t_vars head)
 		droid(head, ply);
 	else
 		ft_putendl("0 0");
-	int h = 0;
-	while (h < ply.m && ply.moves[h])
-		free(ply.moves[h++]);
+	while (ply.h < ply.m && ply.moves[ply.h])
+		free(ply.moves[ply.h++]);
 	if (ply.moves)
 		free(ply.moves);
 }

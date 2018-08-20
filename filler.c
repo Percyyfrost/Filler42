@@ -6,15 +6,15 @@
 /*   By: vuyaninxele <marvin@42.fr>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/26 18:38:01 by vuyaninxe         #+#    #+#             */
-/*   Updated: 2018/08/19 06:11:06 by vnxele           ###   ########.fr       */
+/*   Updated: 2018/08/20 11:58:38 by vnxele           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "filler.h"
 
-void                    piece_dimensions(t_vars *head)
+void			piece_dimensions(t_vars *head)
 {
-	char    **split;
+	char		**split;
 
 	if (head->line[ft_strlen(head->line)] == ':')
 		head->line[ft_strlen(head->line) - 1] = '\0';
@@ -24,9 +24,10 @@ void                    piece_dimensions(t_vars *head)
 	head->piece_c = ft_atoi(split[2]) + 1;
 }
 
-void                    map_dimensions(t_vars *head)
+void			map_dimensions(t_vars *head)
 {
-	char    **split;
+	char		**split;
+
 	if (head->line[ft_strlen(head->line)] == ':')
 		head->line[ft_strlen(head->line) - 1] = '\0';
 	split = ft_strsplit(head->line, ' ');
@@ -35,26 +36,29 @@ void                    map_dimensions(t_vars *head)
 	head->map = (char**)malloc(sizeof(char*) * head->map_r);
 }
 
-void	player_no(t_vars *head)
+void			player_no(t_vars *head)
 {
-		head->pno = (ft_strstr(head->line, "$$$ exec p1")) ? 'O' : 'X';
-		head->eno = (head->pno == 'O') ? 'X' : 'O';
+	head->pno = (ft_strstr(head->line, "$$$ exec p1")) ? 'O' : 'X';
+	head->eno = (head->pno == 'O') ? 'X' : 'O';
 }
 
-int	main(void)
+void			init(t_vars *head)
 {
-	t_vars	head;
-	//int fd = open("output.txt",  O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
-	int fdi = 0;//open("text1.txt", O_RDONLY);
-	int	i;
+	head->i = 0;
+	get_next_line(0, &head->line);
+	player_no(head);
+	get_next_line(0, &head->line);
+	map_dimensions(head);
+}
+
+int				main(void)
+{
+	t_vars		head;
+	int			i;
 
 	i = 0;
-	head.i = 0;
-	get_next_line(fdi, &head.line);
-	player_no(&head);
-	get_next_line(fdi, &head.line);
-	map_dimensions(&head);
-	while (get_next_line(fdi, &head.line))
+	init(&head);
+	while (get_next_line(0, &head.line))
 	{
 		if (ft_isdigit(head.line[0]) && ft_isspace(head.line[3]))
 			head.map[head.i++] = ft_strsub(head.line, 4, head.map_c);
@@ -73,5 +77,5 @@ int	main(void)
 		}
 		free(head.line);
 	}
-	return(0);
+	return (0);
 }
