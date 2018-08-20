@@ -6,7 +6,7 @@
 /*   By: vuyaninxele <marvin@42.fr>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/26 18:38:01 by vuyaninxe         #+#    #+#             */
-/*   Updated: 2018/08/16 16:38:42 by vnxele           ###   ########.fr       */
+/*   Updated: 2018/08/19 06:11:06 by vnxele           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(void)
 {
 	t_vars	head;
 	//int fd = open("output.txt",  O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
-	int fdi = 0;// open("text1.txt", O_RDONLY);
+	int fdi = 0;//open("text1.txt", O_RDONLY);
 	int	i;
 
 	i = 0;

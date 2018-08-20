@@ -6,7 +6,7 @@
 /*   By: vuyaninxele <marvin@42.fr>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 07:16:22 by vuyaninxe         #+#    #+#             */
-/*   Updated: 2018/08/16 07:11:46 by vnxele           ###   ########.fr       */
+/*   Updated: 2018/08/19 07:05:32 by vnxele           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,6 @@ void		anlys_piece(t_vars *head)
 		head->w_end--;
 	}
 }
-
-/*void		add_move(int x, int y)
-{
-	
-}*/
 
 void		match(t_vars head, t_play *ply)
 {

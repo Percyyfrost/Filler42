@@ -6,7 +6,7 @@
 /*   By: vnxele <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/15 07:02:28 by vnxele            #+#    #+#             */
-/*   Updated: 2018/08/17 06:17:00 by vnxele           ###   ########.fr       */
+/*   Updated: 2018/08/19 22:35:48 by vnxele           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,31 @@ int		side_check(t_vars head, int side)
 	return (0);
 }
 
-void		en_pos(t_vars head, t_play ply)
+int		area_check(t_vars head, int i, int j)
+{
+	int y;
+	int x;
+	int tick;
+
+	y = (i == 0) ? 0 : i - 1;
+	tick = 0;
+	while (y <= i + 1 && y < head.map_r)
+	{
+		x = (j == 0) ? 0 : j - 1; 
+		while (x <= j + 1 && x < head.map_r)
+		{
+			if (head.map[y][x] == '.')
+				tick++;
+			x++;
+		}
+		y++;
+	}
+	if (tick > 1)
+		return (1);
+	return (0);
+}
+
+void		droid(t_vars head, t_play ply)
 {
 	int i;
 	int j;
@@ -44,7 +68,6 @@ void		en_pos(t_vars head, t_play ply)
 
 	me = 0;
 	i = 0;
-	j = 0;
 	hlf = head.map_r / 2;
 	s = 0;
 	side = 0;
@@ -61,32 +84,29 @@ void		en_pos(t_vars head, t_play ply)
 		i = head.map_r - 1;
 		me = hlf + 1;
 	}
-	while (i > -1 && i < head.map_r)
+	int f = 0;
+	while (i > -1 && i < head.map_r && !f)
 	{
-		if (ft_strchr(head.map[i], head.eno))
+		j = 0;
+		while (j < head.map_c && !f)
 		{
-			j = head.map_c - ft_strlen(ft_strchr(head.map[i], head.eno));
-			break ;
+			if (head.map[i][j] == head.eno && area_check(head, i, j))
+				f = 1;
+			j++;
 		}
 		(me < hlf) ? i++ : i--;
 	}
-	if (me > hlf && !ft_strchr(head.map[0], head.pno))
+	if (me > hlf && !ft_strchr(head.map[head.map_r/2], head.pno))
 	{
 		i = 0;
-		j = 0 ;
+		j = 0;
+	}
+	if (me > hlf && !side_check(head, 0))
+	{
+		i = head.map_r - 7;
+		j = 0;
 	}
 
-	if ((ft_strchr(head.map[2], head.eno) && !ft_strchr(head.map[2], head.pno) && !ft_strchr(head.map[head.map_r - 1], head.pno))|| (head.map_r == 100 && !ft_strchr(head.map[head.map_r - 1], head.pno) && !ft_strchr(head.map[11], head.pno)))
-	{
-		i = head.map_r - 1;
-		j = 0;
-		side = 1;
-	}
-	if (ft_strchr(head.map[head.map_r - 1], head.pno) && side && !ft_strchr(head.map[0], head.pno) && !ft_strchr(head.map[head.map_r - 1], head.eno))
-	{
-		i = 0;
-		j = head.map_c - 1;
-	}
 	while(s < ply.m)
 	{
 		arr[s] = distance(i, ply.moves[s][0], j, ply.moves[s][1]);
@@ -105,9 +125,4 @@ void		en_pos(t_vars head, t_play ply)
 	write(1, " ", 1);
 	ft_putnbr(ply.moves[s][1]);
 	write(1, "\n", 1);
-}
-void	droid(t_vars head, t_play ply)
-{
-	en_pos(head, ply);
-
 }
